@@ -1,42 +1,107 @@
+import { object } from "prop-types";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			people: [],
+			planets: [],
+			vehicles: [],
+			learnMorePeople: [],
+			learnMoreVehicles: [],
+			learnMorePlanets: [],
+			favorites: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+
+			getPeople: async () => {
+				try {
+					const response = await fetch("https://www.swapi.tech/api/people");
+
+					const data = await response.json();
+
+					if (response) setStore({ people: data.results });
+
+
+				} catch (error) {
+					console.log(error);
+				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			getPlanets: async () => {
+				try {
 
-				//reset the global store
-				setStore({ demo: demo });
+					const response = await fetch("https://www.swapi.tech/api/planets");
+
+					const data = await response.json();
+
+					if (response) setStore({ planets: data.results });
+
+
+				} catch (error) {
+					console.log(error);
+				}
+			},
+
+			getVehicles: async () => {
+				try {
+
+					const response = await fetch("https://www.swapi.tech/api/vehicles");
+
+					const data = await response.json();
+
+					if (response) setStore({ vehicles: data.results });
+
+
+				} catch (error) {
+					console.log(error);
+				}
+			},
+
+			putLearnMorePeople: (object) => {
+
+
+				setStore({ learnMorePeople: object });
+
+			},
+
+			putLearnMoreVehicles: (object) => {
+
+
+				setStore({ learnMoreVehicles: object });
+
+			},
+
+			putLearnMorePlanets: (object) => {
+
+
+				setStore({ learnMorePlanets: object });
+
+			},
+
+			addFavorites: (favoriteName) => {
+
+				let copiaFavorite = getStore().favorites;
+
+				copiaFavorite.push(favoriteName);
+
+				let filtredList = [...new Set(copiaFavorite)]; // Array que elimina los duplicados
+
+				setStore({ favorites: filtredList });
+
+			},
+
+			deleteFavorites: (favoriteName) => {
+
+				let Favorites = getStore().favorites;
+
+				//Declaro un nuevo array para guardar un array con los nuevos elementos
+				let favoritesDelete = Favorites.filter((oneFavorite) => oneFavorite !== favoriteName);
+
+				setStore({ favorites: favoritesDelete });
 			}
 		}
 	};
